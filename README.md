@@ -5,10 +5,9 @@
 </div>
 
 ## Abstract
-[Santander Customer Satisfaction
-](https://www.kaggle.com/c/santander-customer-satisfaction)
+[Santander Customer Satisfaction Competition](https://www.kaggle.com/c/santander-customer-satisfaction)
 
-- Host : [**Santander Bank**](https://www.santanderbank.com/us/personal)British bank, wholly owned by the Spanish Santander Group.
+- Host : [**Santander Bank**](https://www.santanderbank.com/us/personal), a British bank, wholly owned by the Spanish Santander Group.
 - Prize : $ 60,000
 - Problem : Binary Classification
 - Evaluation : [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)
@@ -40,6 +39,8 @@ python code/main.py
 for each of the directories.
 
 Make sure you are on Python 3.5.2 with library versions same as specified in requirements.txt
+
+## Add requirements.txt
 
 **[Submit]**
 
