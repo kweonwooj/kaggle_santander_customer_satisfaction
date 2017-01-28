@@ -9,6 +9,7 @@ from datetime import datetime
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
+import xgboost as xgb
 
 from utils.data_utils import *
 from utils.model_utils import *
@@ -63,6 +64,19 @@ def main():
     print('# Performing Cross-Validation..')
     print('-' * 50)
 
+    param = {
+        'objective': 'binary:logistic',
+        'eta': 0.1,
+        'min_child_weight': 10,
+        'max_depth': 8,
+        'silent': 1,
+        # 'nthread': 16,
+        'eval_metric': 'auc',
+        'colsample_bytree': 0.8,
+        'colsample_bylevel': 0.9,
+    }
+    best_ntree_limits = []
+
     y_pred = np.zeros(Y.shape)
 
     n_feat = 70
@@ -77,11 +91,14 @@ def main():
         X_trn, X_vld = trn[trn_index], trn[vld_index]
         y_trn, y_vld = Y[trn_index], Y[vld_index]
 
-        model = RandomForestClassifier(max_depth=10,
-                                       n_jobs=-1, random_state=777)
+        dtrn = xgb.DMatrix(X_trn, label=y_trn, feature_names=cols)
+        dvld = xgb.DMatrix(X_vld, label=y_vld, feature_names=cols)
 
-        model.fit(X_trn, y_trn)
-        y_pred[vld_index] = model.predict_proba(X_vld)[:, 1]
+        evallist = [(dtrn, 'train'), (dvld, 'eval')]
+        model = xgb.train(param, dtrn, 1000, evals=evallist, early_stopping_rounds=20)
+
+        y_pred[vld_index] = model.predict(dvld, ntree_limit=model.best_ntree_limit)
+        best_ntree_limits.append(model.best_ntree_limit)
 
 
     print('# Evaluate Cross-Validation..')
@@ -93,13 +110,14 @@ def main():
     ##################################################################################################################
 
     print('# Re-Training on full train data..')
-    model.fit(trn, Y)
+    dtrn = xgb.DMatrix(trn, label=Y, feature_names=cols)
+    model = xgb.train(param, dtrn, int(np.mean(best_ntree_limits) * (n_splits + 1) / n_splits))
 
     print('# Making predictions on test data..')
     X_tst, tst_id = load_test()
     X_tst = X_tst.as_matrix(columns=cols)
-
-    tst_pred = model.predict_proba(X_tst)[:, 1]
+    dtst = xgb.DMatrix(X_tst, feature_names=cols)
+    tst_pred = model.predict(dtst)
 
     ##################################################################################################################
     ### Submission
