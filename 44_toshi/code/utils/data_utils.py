@@ -8,7 +8,9 @@ import numpy as np
 import itertools
 import os
 
-def prepare_data():
+def prepare_data(LOG):
+
+    LOG.info('# Load data')
     train_path = '../input/train.csv'
     test_path  = '../input/test.csv'
 
@@ -21,14 +23,14 @@ def prepare_data():
     data = pd.concat([trn, tst], axis=0)
     data.reset_index(drop=True)
 
-    # remove constants
+    LOG.info('# Remove constants')
     constants = []
     for col in data.columns:
         if len(np.unique(data[col])) == 1:
             constants.append(col)
     data.drop(constants, axis=1, inplace=True)
 
-    # remove duplicates
+    LOG.info('# Remove duplicates')
     pairs = list(itertools.combinations(data.columns, 2))
     to_remove = []
     for f1, f2 in pairs:
@@ -37,7 +39,7 @@ def prepare_data():
                 to_remove.append(f2)
     data.drop(to_remove, axis=1, inplace=True)
 
-    # replace NAs
+    LOG.info('# Replace NAs')
     data[data == -999999] = np.nan
     data[data == 9999999999] = np.nan
 
@@ -48,5 +50,6 @@ def prepare_data():
     if not os.path.exists('./input'):
         os.mkdir('./input')
 
+    LOG.info('# Save to files')
     trn_2.to_csv('./input/train.csv', index=False)
     tst_2.to_csv('./input/test.csv', index=False)

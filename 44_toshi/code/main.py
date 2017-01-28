@@ -15,32 +15,36 @@ import xgboost as xgb
 from utils.data_utils import *
 from utils.model_utils import *
 from utils.feature_utils import *
+from utils.log_utils import *
+
+LOG = get_logger('kweonwooj_solution.log')
 
 import numpy as np
 import pandas as pd
-import scipy
+
+
 np.random.seed(777)
 
 
 def main():
 
-    print('=' * 50)
-    print('# Santander Customer Satisfaction _ 44_toshi')
-    print('-' * 50)
+    LOG.info('=' * 50)
+    LOG.info('# Santander Customer Satisfaction _ 44_toshi')
+    LOG.info('-' * 50)
 
     # preprocess data
-    prepare_data()
+    prepare_data(LOG)
 
     # generate derivative feature
-    generate_name_feature()
+    generate_name_feature(LOG)
 
     ##################################################################################################################
     ### Loading data
     ##################################################################################################################
 
-    print('=' * 50)
-    print('# Loading data..')
-    print('-' * 50)
+    LOG.info('=' * 50)
+    LOG.info('# Loading data..')
+    LOG.info('-' * 50)
 
     trn = pd.read_csv('./input/train.csv')
     tst = pd.read_csv('./input/test.csv')
@@ -64,15 +68,15 @@ def main():
     ### Cross Validations
     ##################################################################################################################
 
-    print('=' * 50)
-    print('# Performing Cross-Validation..')
-    print('-' * 50)
+    LOG.info('=' * 50)
+    LOG.info('# Performing Cross-Validation..')
+    LOG.info('-' * 50)
 
-    xgb_engine(trn, tst, y, test_id)
+    xgb_engine(trn, tst, y, test_id, LOG)
 
 
 if __name__ == '__main__':
     start = time.time()
     main()
-    print('# Finished ({:.2f} sec elapsed)'.format(time.time() - start))
+    LOG.info('# Finished ({:.2f} sec elapsed)'.format(time.time() - start))
 

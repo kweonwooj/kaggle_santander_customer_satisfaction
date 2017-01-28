@@ -11,10 +11,10 @@ np.random.seed(777)
 iters = 100
 result_all = pd.DataFrame()
 
-def xgb_engine(trn, tst, y, test_id):
+def xgb_engine(trn, tst, y, test_id, LOG):
 
     for i in range(iters):
-        print('# Iter {} / {}'.format(i+1, iters))
+        LOG.info('# Iter {} / {}'.format(i+1, iters))
 
         myparam_colsample_bytree = np.random.uniform(0.5, 0.99, 1)[0]
         myparam_subsample = np.random.uniform(0.7, 0.99, 1)[0]
@@ -58,6 +58,7 @@ def xgb_engine(trn, tst, y, test_id):
                                     'myparam_base_score': myparam_base_score,
                                     'best_itr': int(best_itr * 1.1),
                                     'best_score': best_score}])
+        LOG.info('# result_new : {}'.format(result_new))
         result_all = pd.concat([result_all, result_new], axis=0)
 
         if not os.path.exists('./output'):
@@ -66,7 +67,7 @@ def xgb_engine(trn, tst, y, test_id):
         result_all.to_csv('./output/result_all.csv', index=False)
 
         model = xgb.train(dtrain=dtrn, params=param, num_boost_round=best_itr)
-        imp = model.get_fscore()
+        # imp = model.get_fscore()
 
         dtst = xgb.DMatrix(tst.as_matrix(columns=features))
         submission = pd.DataFrame(model.predict(dtst), columns=['TARGET'])
