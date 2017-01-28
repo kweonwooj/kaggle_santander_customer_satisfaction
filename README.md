@@ -21,7 +21,8 @@ In this competition, you'll work with hundreds of anonymized features to predict
 | Submission | CV LogLoss | Public LB | Rank | Private LB | Rank |
 |:----------:|:----------:|:---------:|:----:|:----------:|:----:|
 | bare_minimum | 0.800430 | | | 0.785805 | **3958** |
-| kweonwooj | 
+| reduced version of kweonwooj | 0.821226 | | | 0.822967 | **2917** |
+| kweonwooj | | 0.840797 | **1667** | 0.826500 | **947** |
 
 ## How to Run
 
@@ -64,21 +65,11 @@ for reduced version of kweonwooj
 - use annotation + object detection method, it is key methodology in image classification
 
 ## Winning Methods
-# update this section
-* 1st by jacobkie [Link](https://www.kaggle.com/c/state-farm-distracted-driver-detection/forums/t/22906/a-brief-summary/131467#post131467)
-    - Pre-trained VGG16, modified VGG16_3 (Single Model got LB score around 0.3)
-    - VGG16_3 trained with two selected regions of interests(head and radio area) together with original image
-    - K-Nearest Neighbor Average: Uses last Maxpool layer(pool5) of VGG16 to map test image to 512*7*7 coordinate, use distances in this space to define similarity, weighted average of predictions together with 10-NN improves single model score by 0.10~0.12
-    - Ensemble average for each category separately. Models with top 10% cross-entropy loss associated with category are chosen. Outperforms simple arithmetic/geometric average.
-    - Segment Average: Divide test images into group using pool5-feature space, if one group displayes consistency and confidence, renormalize all the images in that group to share predictions.
-* 3rd by BRAZIL_POWER (0.08877 > 0.09058) [Link](https://www.kaggle.com/c/state-farm-distracted-driver-detection/forums/t/22631/3-br-power-solution)
-    - Ensemble of 4 models - ResNet152, VGG16
-    - Use synthetic test image = image + nearest neighbor images
-   
-* 5th by DZS Team (0.10252 > 0.12144) [Link](https://www.kaggle.com/c/state-farm-distracted-driver-detection/forums/t/22627/share-your-best-single-model-score-on-public-lb)
-    - Synthetic Train Images = Half + Half of train image. 5 Million synthetic image to train GoogleNet
-   
-* 10th by toshi-k (0.14354 > 0.14911) [Link](https://github.com/toshi-k/kaggle-distracted-driver-detection)
-    - 20 Models for Ensembling
-    - CNN to detect driver body pixel (Semantic Segmentation)
-    - Crop driver region(by bounding box) and use another classifier on this region
+- 3rd place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20978/3rd-place-solution), [Github](https://github.com/diefimov/santander_2016) by Dmitry Efimov
+- 7th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/21932/7th-place-post-competition) by Francisco Javier Díaz Herrera
+- 12th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20811/my-12th-place-simple-solution) by Antonio José Navarro Céspedes
+- 13th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20786/13th-place-good-or-bad) by Ouranos
+- 34th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/22089/34th-place-code), [Github](https://github.com/pjpan/Practice/tree/master/Kaggle-SantanderCustomerSatisfaction) by wpppj
+- 44th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20858/44th-place-solution), [Github](https://github.com/toshi-k/kaggle-santander-customer-satisfaction) by toshi_k
+- [How to get Rank 24](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20773/how-to-get-rank-24)
+- [Possible 14th place](https://www.kaggle.com/shahnawazakhtar/santander-customer-satisfaction/14th-place-private-lb-script/discussion)

@@ -1,10 +1,5 @@
 '''
     This file is the initial Santander Customer Satisfaction pipeline script that serves as a starter.
-
-    This script has result as below:
-        TRN logloss :
-        VLD logloss :
-        Private LB  :
 '''
 
 import os
