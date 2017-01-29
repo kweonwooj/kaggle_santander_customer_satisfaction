@@ -8,10 +8,11 @@ import pandas as pd
 import os
 
 np.random.seed(777)
-iters = 100
-result_all = pd.DataFrame()
 
 def xgb_engine(trn, tst, y, test_id, LOG):
+
+    iters = 100
+    result_all = pd.DataFrame()
 
     for i in range(iters):
         LOG.info('# Iter {} / {}'.format(i+1, iters))
