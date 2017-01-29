@@ -4,13 +4,8 @@
     Original Link: https://github.com/toshi-k/kaggle-santander-customer-satisfaction
 '''
 
-import os
 import time
-from datetime import datetime
-from sklearn.model_selection import StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score
-import xgboost as xgb
+from glob import glob
 
 from utils.data_utils import *
 from utils.model_utils import *
@@ -61,7 +56,7 @@ def main():
     y = trn['TARGET'].values
     test_id = trn['ID'].values
 
-    trn.drop(['ID','TARGET'], axis=1, inplace=True)
+    trn.drop(['ID', 'TARGET'], axis=1, inplace=True)
     tst.drop(['ID'], axis=1, inplace=True)
 
     ##################################################################################################################
@@ -74,6 +69,29 @@ def main():
 
     xgb_engine(trn, tst, y, test_id, LOG)
 
+    ##################################################################################################################
+    ### Ensemble _ Averaging
+    ##################################################################################################################
+
+    candidates = glob('./output/xgb/*')
+    scores = [candi.split('_')[-1].split('.')[0] for candi in candidates]
+
+    info = pd.DataFrame(candidates, columns=['filename'])
+    info['TARGET'] = scores
+
+    num_model = 10
+    for i in range(num_model):
+        target_file = info.sort(columns='TARGET', ascending=False).iloc[i]['filename']
+        data_i = pd.read_csv(target_file)
+
+        if i == 0:
+            data = data_i
+        else:
+            data['TARGET'] += data_i['TARGET']
+
+    data['TARGET'] /= num_model
+    mean_valid = np.mean(info.sort(columns='TARGET', ascending=False).iloc[:num_model]['TARGET'].astype(int))
+    data.to_csv('./output/xgb_nummodel-{}_mvalid-{}.csv'.format(num_model, round(mean_valid,4)), index=False)
 
 if __name__ == '__main__':
     start = time.time()
