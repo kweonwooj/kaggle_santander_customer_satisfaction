@@ -41,7 +41,6 @@ def xgb_engine(trn, tst, y, test_id, LOG):
                           dtrain=dtrn,
                           num_boost_round=100000,
                           nfold=10,
-                          stratified=True,
                           metrics='auc',
                           early_stopping_rounds=100,
                           verbose_eval=100,
@@ -70,7 +69,7 @@ def xgb_engine(trn, tst, y, test_id, LOG):
         model = xgb.train(dtrain=dtrn, params=param, num_boost_round=best_itr)
         # imp = model.get_fscore()
 
-        dtst = xgb.DMatrix(tst.as_matrix(columns=features))
+        dtst = xgb.DMatrix(tst.as_matrix(columns=features), feature_names=features)
         submission = pd.DataFrame(model.predict(dtst), columns=['TARGET'])
         submission['ID'] = test_id
 

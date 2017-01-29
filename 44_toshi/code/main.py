@@ -28,10 +28,10 @@ def main():
     LOG.info('-' * 50)
 
     # preprocess data
-    prepare_data(LOG)
+    #prepare_data(LOG)
 
     # generate derivative feature
-    generate_name_feature(LOG)
+    #generate_name_feature(LOG)
 
     ##################################################################################################################
     ### Loading data
@@ -54,7 +54,7 @@ def main():
     tst.fillna(-999999, inplace=True)
 
     y = trn['TARGET'].values
-    test_id = trn['ID'].values
+    test_id = tst['ID'].values
 
     trn.drop(['ID', 'TARGET'], axis=1, inplace=True)
     tst.drop(['ID'], axis=1, inplace=True)
