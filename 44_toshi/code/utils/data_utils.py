@@ -43,8 +43,8 @@ def prepare_data(LOG):
     data[data == -999999] = np.nan
     data[data == 9999999999] = np.nan
 
-    trn_2 = data[:trn.shape[0], :]
-    tst_2 = data[trn.shape[0]:, :]
+    trn_2 = data.iloc[:trn.shape[0], :]
+    tst_2 = data.iloc[trn.shape[0]:, :]
     trn_2['TARGET'] = trg
 
     if not os.path.exists('./input'):
