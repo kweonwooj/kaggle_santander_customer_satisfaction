@@ -11,7 +11,7 @@ np.random.seed(777)
 
 def xgb_engine(trn, tst, y, test_id, LOG):
 
-    iters = 100
+    iters = 3
     result_all = pd.DataFrame()
 
     for i in range(iters):
@@ -39,9 +39,9 @@ def xgb_engine(trn, tst, y, test_id, LOG):
         dtrn = xgb.DMatrix(trn.as_matrix(columns=features), label=y, feature_names=features)
         model_cv = xgb.cv(params=param,
                           dtrain=dtrn,
-                          num_boost_round=100000,
+                          num_boost_round=30,
                           nfold=10,
-                          metrics='auc',
+                          stratified=True,
                           early_stopping_rounds=100,
                           verbose_eval=100,
                           seed=777+i)
