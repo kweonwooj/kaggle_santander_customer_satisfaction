@@ -28,10 +28,10 @@ def main():
     LOG.info('-' * 50)
 
     # preprocess data
-    #prepare_data(LOG)
+    prepare_data(LOG)
 
     # generate derivative feature
-    #generate_name_feature(LOG)
+    generate_name_feature(LOG)
 
     ##################################################################################################################
     ### Loading data

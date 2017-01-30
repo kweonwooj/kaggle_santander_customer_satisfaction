@@ -9,11 +9,14 @@ import pandas as pd
 def generate_name_feature(LOG):
 
     LOG.info('# Load data')
-    trn = pd.read_csv('../input/train.csv')
-    tst = pd.read_csv('../input/test.csv')
+    trn = pd.read_csv('./input/train.csv')
+    tst = pd.read_csv('./input/test.csv')
 
     add_trn = pd.DataFrame(trn['ID'], columns=['ID'])
     add_tst = pd.DataFrame(tst['ID'], columns=['ID'])
+
+    trn = trn.drop(['ID', 'TARGET'], axis=1)
+    tst = tst.drop(['ID'], axis=1)
 
     LOG.info('# Lv.1')
     col = 'num_zero'
@@ -65,5 +68,5 @@ def generate_name_feature(LOG):
         add_tst[col] = (tst[cols] == 0).sum(axis=1)
 
     LOG.info('# Save files')
-    add_trn.to_csv('./input/name_feat_trn.csv', index=False)
-    add_tst.to_csv('./input/name_feat_tst.csv', index=False)
+    add_trn.to_csv('./input/name_feature_train.csv', index=False)
+    add_tst.to_csv('./input/name_feature_test.csv', index=False)
