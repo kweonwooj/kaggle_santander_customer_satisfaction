@@ -12,7 +12,7 @@ from utils.model_utils import *
 from utils.feature_utils import *
 from utils.log_utils import *
 
-LOG = get_logger('kweonwooj_solution.log')
+LOG = get_logger('44toshi_solution.log')
 
 import numpy as np
 import pandas as pd
@@ -74,12 +74,12 @@ def main():
     ##################################################################################################################
 
     candidates = glob('./output/xgb/*')
-    scores = [candi.split('_')[-1].split('.')[0] for candi in candidates]
+    scores = [np.float(candi.split('_')[-1].split('.csv')[0]) for candi in candidates]
 
     info = pd.DataFrame(candidates, columns=['filename'])
     info['TARGET'] = scores
 
-    num_model = 10
+    num_model = 100
     for i in range(num_model):
         target_file = info.sort(columns='TARGET', ascending=False).iloc[i]['filename']
         data_i = pd.read_csv(target_file)
@@ -90,11 +90,11 @@ def main():
             data['TARGET'] += data_i['TARGET']
 
     data['TARGET'] /= num_model
-    mean_valid = np.mean(info.sort(columns='TARGET', ascending=False).iloc[:num_model]['TARGET'].astype(int))
-    data.to_csv('./output/xgb_nummodel-{}_mvalid-{}.csv'.format(num_model, round(mean_valid,4)), index=False)
+    mean_valid = np.mean(info.sort(columns='TARGET', ascending=False).iloc[:num_model]['TARGET'])
+    data.to_csv('./output/xgb_nummodel-{}_mvalid-{}.csv'.format(num_model, round(mean_valid, 4)), index=False)
+
 
 if __name__ == '__main__':
     start = time.time()
     main()
     LOG.info('# Finished ({:.2f} sec elapsed)'.format(time.time() - start))
-

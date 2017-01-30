@@ -11,7 +11,7 @@ np.random.seed(777)
 
 def xgb_engine(trn, tst, y, test_id, LOG):
 
-    iters = 3
+    iters = 100
     result_all = pd.DataFrame()
 
     for i in range(iters):
@@ -40,11 +40,11 @@ def xgb_engine(trn, tst, y, test_id, LOG):
 
         model_cv = xgb.cv(params=param,
                           dtrain=dtrn,
-                          num_boost_round=30,
+                          num_boost_round=10000,
                           nfold=10,
                           stratified=True,
                           early_stopping_rounds=100,
-                          verbose_eval=10,
+                          verbose_eval=100,
                           show_stdv=False,
                           seed=777+i)
 
