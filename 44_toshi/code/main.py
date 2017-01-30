@@ -53,10 +53,10 @@ def main():
     trn.fillna(-999999, inplace=True)
     tst.fillna(-999999, inplace=True)
 
-    y = trn['train_target'].values
+    y = trn['TARGET'].values
     test_id = tst['ID'].values
 
-    trn.drop(['ID', 'train_target'], axis=1, inplace=True)
+    trn.drop(['ID', 'TARGET'], axis=1, inplace=True)
     tst.drop(['ID'], axis=1, inplace=True)
 
     ##################################################################################################################
