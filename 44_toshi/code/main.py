@@ -28,10 +28,10 @@ def main():
     LOG.info('-' * 50)
 
     # preprocess data
-    prepare_data(LOG)
+    #prepare_data(LOG)
 
     # generate derivative feature
-    generate_name_feature(LOG)
+    #generate_name_feature(LOG)
 
     ##################################################################################################################
     ### Loading data
@@ -44,8 +44,8 @@ def main():
     trn = pd.read_csv('./input/train.csv')
     tst = pd.read_csv('./input/test.csv')
 
-    add_trn = pd.read_csv('./input/name_feat_trn.csv')
-    add_tst = pd.read_csv('./input/name_feat_tst.csv')
+    add_trn = pd.read_csv('./input/name_feature_train.csv')
+    add_tst = pd.read_csv('./input/name_feature_test.csv')
 
     trn = trn.merge(add_trn, on='ID')
     tst = tst.merge(add_tst, on='ID')
