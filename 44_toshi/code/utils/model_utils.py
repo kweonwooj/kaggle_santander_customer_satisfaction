@@ -6,6 +6,7 @@ import xgboost as xgb
 import numpy as np
 import pandas as pd
 import os
+from sklearn.model_selection import StratifiedKFold
 
 np.random.seed(777)
 
@@ -37,13 +38,17 @@ def xgb_engine(trn, tst, y, test_id, LOG):
 
         features = trn.columns
         dtrn = xgb.DMatrix(trn.as_matrix(columns=features), label=y, feature_names=features)
+
+        folds = StratifiedKFold(n_splits=10, random_state=777)
         model_cv = xgb.cv(params=param,
                           dtrain=dtrn,
                           num_boost_round=30,
-                          nfold=10,
+                          #nfold=10,
+                          folds=folds,
                           stratified=True,
                           early_stopping_rounds=100,
-                          verbose_eval=100,
+                          verbose_eval=10,
+                          show_stdv=False,
                           seed=777+i)
 
         best_score = max(model_cv['test-auc-mean'])
