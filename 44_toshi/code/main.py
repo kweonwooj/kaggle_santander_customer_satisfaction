@@ -36,7 +36,7 @@ def main():
     ##################################################################################################################
     ### Loading data
     ##################################################################################################################
-
+    '''
     LOG.info('=' * 50)
     LOG.info('# Loading data..')
     LOG.info('-' * 50)
@@ -72,14 +72,14 @@ def main():
     ##################################################################################################################
     ### Ensemble _ Averaging
     ##################################################################################################################
-
+    '''
     candidates = glob('./output/xgb/*')
     scores = [np.float(candi.split('_')[-1].split('.csv')[0]) for candi in candidates]
 
     info = pd.DataFrame(candidates, columns=['filename'])
     info['TARGET'] = scores
 
-    num_model = 100
+    num_model = 10
     for i in range(num_model):
         target_file = info.sort(columns='TARGET', ascending=False).iloc[i]['filename']
         data_i = pd.read_csv(target_file)
