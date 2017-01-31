@@ -45,12 +45,12 @@ def ann_engine(trn, tst, y, test_id, LOG):
     for i in range(iters):
         LOG.info('# Iter {} / {}'.format(i+1, iters))
 
-        hidden_1  = np.random.choice(256 - 64, 1)[0] + 64
-        hidden_2  = np.random.choice(256 - 32, 1)[0] + 64
-        relu_1    = np.random.uniform(0, 0.3, 1)[0]
-        relu_2    = np.random.uniform(0, 0.3, 1)[0]
-        dropout_1 = np.random.uniform(0, 0.6, 1)[0]
-        dropout_2 = np.random.uniform(0, 0.6, 1)[0]
+        hidden_1 = np.random.choice(256 - 64, 1)[0] + 64
+        hidden_2 = np.random.choice(256 - 32, 1)[0] + 64
+        relu_1 = int(np.random.choice(3, 1)[0] + 1) / 10
+        relu_2 = int(np.random.choice(3, 1)[0] + 1) / 10
+        dropout_1 = int(np.random.choice(6, 1)[0] + 1) / 10
+        dropout_2 = int(np.random.choice(6, 1)[0] + 1) / 10
 
 
         # cross validation to obtain best_itr
