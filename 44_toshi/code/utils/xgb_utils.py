@@ -6,6 +6,7 @@ import xgboost as xgb
 import numpy as np
 import pandas as pd
 import os
+from glob import glob
 
 np.random.seed(777)
 
@@ -80,3 +81,25 @@ def xgb_engine(trn, tst, y, test_id, LOG):
 
         filename = './output/xgb/xgb_itr_{}_valid_{}.csv'.format(i, round(best_score, 4))
         submission.to_csv(filename, index=False)
+
+
+def xgb_ensemble():
+    engine_name = 'xgb'
+    candidates = glob('./output/{}/*'.format(engine_name))
+    scores = [np.float(candi.split('_')[-1].split('.csv')[0]) for candi in candidates]
+    info = pd.DataFrame(candidates, columns=['filename'])
+    info['TARGET'] = scores
+
+    num_model = 50
+    for i in range(num_model):
+        target_file = info.sort(columns='TARGET', ascending=False).iloc[i]['filename']
+        data_i = pd.read_csv(target_file)
+
+        if i == 0:
+            data = data_i
+        else:
+            data['TARGET'] += data_i['TARGET']
+
+    data['TARGET'] /= num_model
+    mean_valid = np.mean(info.sort(columns='TARGET', ascending=False).iloc[:num_model]['TARGET'])
+    data.to_csv('./output/{}_nummodel-{}_mvalid-{}.csv'.format(engine_name, num_model, round(mean_valid, 4)), index=False)

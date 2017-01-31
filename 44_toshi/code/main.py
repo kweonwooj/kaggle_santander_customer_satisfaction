@@ -8,7 +8,8 @@ import time
 from glob import glob
 
 from utils.data_utils import *
-from utils.model_utils import *
+from utils.xgb_utils import *
+from utils.ann_utils import *
 from utils.feature_utils import *
 from utils.log_utils import *
 
@@ -36,7 +37,7 @@ def main():
     ##################################################################################################################
     ### Loading data
     ##################################################################################################################
-    '''
+
     LOG.info('=' * 50)
     LOG.info('# Loading data..')
     LOG.info('-' * 50)
@@ -67,34 +68,19 @@ def main():
     LOG.info('# Performing Cross-Validation..')
     LOG.info('-' * 50)
 
-    xgb_engine(trn, tst, y, test_id, LOG)
+    #xgb_engine(trn, tst, y, test_id, LOG)
+    ann_engine(trn, tst, y, test_id, LOG)
 
     ##################################################################################################################
     ### Ensemble _ Averaging
     ##################################################################################################################
-    '''
-    candidates = glob('./output/xgb/*')
-    scores = [np.float(candi.split('_')[-1].split('.csv')[0]) for candi in candidates]
 
-    info = pd.DataFrame(candidates, columns=['filename'])
-    info['TARGET'] = scores
-
-    num_model = 10
-    for i in range(num_model):
-        target_file = info.sort(columns='TARGET', ascending=False).iloc[i]['filename']
-        data_i = pd.read_csv(target_file)
-
-        if i == 0:
-            data = data_i
-        else:
-            data['TARGET'] += data_i['TARGET']
-
-    data['TARGET'] /= num_model
-    mean_valid = np.mean(info.sort(columns='TARGET', ascending=False).iloc[:num_model]['TARGET'])
-    data.to_csv('./output/xgb_nummodel-{}_mvalid-{}.csv'.format(num_model, round(mean_valid, 4)), index=False)
-
+    #xgb_ensemble()
+    ann_ensemble()
 
 if __name__ == '__main__':
     start = time.time()
     main()
+    LOG.info('=' * 50)
     LOG.info('# Finished ({:.2f} sec elapsed)'.format(time.time() - start))
+    LOG.info('=' * 50)
