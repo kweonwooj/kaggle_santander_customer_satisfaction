@@ -58,8 +58,8 @@ def ann_engine(trn, tst, y, test_id, LOG):
         n_splits = 5
         nb_epoch = 30
         skf = StratifiedKFold(n_splits=n_splits, random_state=777)
-        for i, (trn_index, vld_index) in enumerate(skf.split(trn, y)):
-            print('# CV Iter {} / {}'.format(i + 1, n_splits))
+        for j, (trn_index, vld_index) in enumerate(skf.split(trn, y)):
+            print('# CV Iter {} / {}'.format(j + 1, n_splits))
 
             x_trn, x_vld = trn[trn_index], trn[vld_index]
             y_trn, y_vld = y[trn_index], y[vld_index]

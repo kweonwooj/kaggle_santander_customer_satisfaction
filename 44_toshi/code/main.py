@@ -5,7 +5,6 @@
 '''
 
 import time
-from glob import glob
 
 from utils.data_utils import *
 from utils.xgb_utils import *
@@ -29,10 +28,10 @@ def main():
     LOG.info('-' * 50)
 
     # preprocess data
-    #prepare_data(LOG)
+    prepare_data(LOG)
 
     # generate derivative feature
-    #generate_name_feature(LOG)
+    generate_name_feature(LOG)
 
     ##################################################################################################################
     ### Loading data
@@ -68,15 +67,15 @@ def main():
     LOG.info('# Performing Cross-Validation..')
     LOG.info('-' * 50)
 
-    #xgb_engine(trn, tst, y, test_id, LOG)
-    ann_engine(trn, tst, y, test_id, LOG)
+    xgb_engine(trn, tst, y, test_id, LOG)
+    #ann_engine(trn, tst, y, test_id, LOG)
 
     ##################################################################################################################
     ### Ensemble _ Averaging
     ##################################################################################################################
 
-    #xgb_ensemble()
-    ann_ensemble()
+    xgb_ensemble()
+    #ann_ensemble()
 
 if __name__ == '__main__':
     start = time.time()

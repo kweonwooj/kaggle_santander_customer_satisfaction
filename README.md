@@ -21,8 +21,10 @@ In this competition, you'll work with hundreds of anonymized features to predict
 | Submission | CV LogLoss | Public LB | Rank | Private LB | Rank |
 |:----------:|:----------:|:---------:|:----:|:----------:|:----:|
 | bare_minimum | 0.800430 | | | 0.785805 | **3958** |
-| reduced version of kweonwooj | 0.821226 | | | 0.822967 | **2917** |
+| kweonwooj redux| 0.821226 | | | 0.822967 | **2917** |
 | kweonwooj | | 0.840797 | **1667** | 0.826500 | **947** |
+| toshi_k redux | 0.8418 | | | 0.826658 | **810** |
+
 
 ## How to Run
 
