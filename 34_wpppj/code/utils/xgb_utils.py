@@ -54,7 +54,7 @@ def xgb_engine(trn, tst, y, LOG):
                              maximize=True,
                              verbose_eval=100,
                              seed=777)
-            LOG.info('# Best n_tree : {}'.format(best_cv['test-auc-mean'].max()))
+            LOG.info('# Best n_tree : {}'.format(best_cv['test-auc-mean'].idxmax()))
 
         n_rounds = best_cv['test-auc-mean'].idxmax()
         xgb_stack = xgb.train(params=param,
