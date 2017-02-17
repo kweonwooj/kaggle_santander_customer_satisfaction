@@ -6,6 +6,7 @@ import xgboost as xgb
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_auc_score
 
 np.random.seed(777)
 
@@ -35,7 +36,7 @@ def xgb_engine(trn, tst, y, LOG):
 
     for i, (trn_ind, vld_ind) in enumerate(skf.split(trn, y)):
 
-        print('# Fold {} / {}'.format(i + 1, n_folds))
+        LOG.info('# Fold {} / {}'.format(i + 1, n_folds))
 
         x_trn, x_vld = trn[trn_ind], trn[vld_ind]
         y_trn, y_vld = y[trn_ind], y[vld_ind]
@@ -53,7 +54,7 @@ def xgb_engine(trn, tst, y, LOG):
                              maximize=True,
                              verbose_eval=100,
                              seed=777)
-            print('# Best n_tree : {}'.format(best_cv['test-auc-mean'].max()))
+            LOG.info('# Best n_tree : {}'.format(best_cv['test-auc-mean'].max()))
 
         n_rounds = best_cv['test-auc-mean'].idxmax()
         xgb_stack = xgb.train(params=param,
@@ -64,5 +65,7 @@ def xgb_engine(trn, tst, y, LOG):
 
         vld_stack[vld_ind] = xgb_stack.predict(dvld)
         tst_stack += xgb_stack.predict(dtst) * 1.0 / n_folds
+
+    LOG.info('# Evaluation on vld : {:.6}'.format(roc_auc_score(y, vld_stack)))
 
     return vld_stack, tst_stack

@@ -12,6 +12,7 @@ from utils.xgb_utils import *
 from utils.log_utils import *
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
 from datetime import datetime
 
 LOG = get_logger('34_wpppj_solution.log')
@@ -54,7 +55,10 @@ def main():
 
     # fit stack
     model = LogisticRegression(C=1, n_jobs=-1, random_state=777)
-    model.fit(np.expand_dims(vld_stack, axis=1), y)
+    vld_stack = np.expand_dims(vld_stack, axis=1)
+    model.fit(vld_stack, y)
+    vld_stack_pred = model.predict_proba(vld_stack)[:,1]
+    LOG.info('# Evaluation on vld after LR fit: {:.6}'.format(roc_auc_score(y, vld_stack_pred)))
 
     # normalize and apply stack
     tst_nrm_stack = (tst_stack - tst_stack.min()) / (tst_stack.max() - tst_stack.min())
@@ -67,6 +71,12 @@ def main():
         os.mkdir('./output')
     sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
     submission.to_csv(sub_file, index=False)
+
+    # generate submission without LR fit
+    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_nrm_stack})
+    sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '_woLR.csv'
+    submission.to_csv(sub_file, index=False)
+
 
 if __name__ == '__main__':
     start = time.time()
