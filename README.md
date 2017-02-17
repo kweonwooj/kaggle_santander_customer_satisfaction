@@ -20,11 +20,13 @@ In this competition, you'll work with hundreds of anonymized features to predict
 ## Result
 | Submission | CV LogLoss | Public LB | Rank | Private LB | Rank |
 |:----------:|:----------:|:---------:|:----:|:----------:|:----:|
-| bare_minimum | 0.800430 | | | 0.785805 | **3958** |
-| kweonwooj redux| 0.821226 | | | 0.822967 | **2917** |
+| bare_minimum | 0.800430 | 0.797948 | **3986** | 0.785805 | **3958** |
+| kweonwooj redux| 0.821226 | 0.836279 | **3029** | 0.822967 | **2917** |
 | kweonwooj | | 0.840797 | **1667** | 0.826500 | **947** |
-| toshi_k redux | 0.8418 | | | 0.826658 | **810** |
+| toshi_k redux | 0.8418 | 0.840002 | **2122** | 0.826658 | **810** |
+| wpppj redux | 0.841137 | 0.839622 | **2232** | 0.826814 | **556** |
 
+Total teams : 5,123
 
 ## How to Run
 
