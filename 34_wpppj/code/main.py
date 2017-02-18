@@ -11,8 +11,9 @@ from utils.data_utils import *
 from utils.xgb_utils import *
 from utils.log_utils import *
 
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
 from datetime import datetime
 
 LOG = get_logger('34_wpppj_solution.log')
@@ -45,36 +46,79 @@ def main():
 
     y = trn['TARGET'].values
     tst_id = tst['ID'].values
-
     drop_cols = ['ID', 'TARGET']
     trn.drop(drop_cols, axis=1, inplace=True)
     tst.drop(drop_cols, axis=1, inplace=True)
 
-    # use xgboost to get 10-fold cv
-    vld_stack, tst_stack = xgb_engine(trn, tst, y, LOG)
+    features = trn.columns
+    trn = trn.as_matrix(columns=features)
+    tst = tst.as_matrix(columns=features)
 
-    # fit stack
-    model = LogisticRegression(C=1, n_jobs=-1, random_state=777)
-    vld_stack = np.expand_dims(vld_stack, axis=1)
-    model.fit(vld_stack, y)
-    vld_stack_pred = model.predict_proba(vld_stack)[:,1]
-    LOG.info('# Evaluation on vld after LR fit: {:.6}'.format(roc_auc_score(y, vld_stack_pred)))
+    # classifiers to use in blending
+    clfs = [RandomForestClassifier(n_estimators=400, n_jobs=-1, criterion='gini', random_state=777),
+            ExtraTreesClassifier(n_estimators=400, n_jobs=-1, criterion='gini', random_state=777),
+            GradientBoostingClassifier(learning_rate=0.05, subsample=0.5, max_depth=6, n_estimators=400,
+                                       random_state=777),
+            LogisticRegression(C=1, n_jobs=-1, random_state=777),
+            xgb.XGBClassifier(missing=np.nan, max_depth=5, n_estimators=500, learning_rate=0.02, subsample=0.7,
+                              colsample_bytree=0.7)
+            ]
 
-    # normalize and apply stack
-    tst_nrm_stack = (tst_stack - tst_stack.min()) / (tst_stack.max() - tst_stack.min())
-    tst_stack_pred = model.predict_proba(np.expand_dims(tst_nrm_stack, axis=1))[:, 1]
+    n_folds = 10
+    skf = StratifiedKFold(n_splits=n_folds)
 
-    # generate submission
-    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_stack_pred})
+    blend_trn = np.zeros(trn.shape[0], len(clfs))
+    blend_tst = np.zeros(tst.shape[0], len(clfs))
+
+    # blender
+    for j, clf in enumerate(clfs):
+        LOG.info('# {} / {} : {}'.format(j + 1, len(clfs), clf))
+        blend_tst_j = np.zeros(tst.shape[0], n_folds)
+
+        for i, (trn_ind, vld_ind) in enumerate(skf.split(trn, y)):
+            LOG.info('# Fold {} / {}'.format(i + 1, n_folds))
+
+            x_trn, x_vld = trn[trn_ind], trn[vld_ind]
+            y_trn, y_vld = y[trn_ind], y[vld_ind]
+
+            clf.fit(x_trn, y_trn)
+
+            vld_pred = clf.predict_proba(x_vld)[:, 1]
+            blend_trn[vld_ind, j] = vld_pred
+
+            tst_pred = clf.predict_proba(tst)[:, 1]
+            blend_tst_j[:, i] = tst_pred
+        blend_tst[:, j] = blend_tst_j.mean(1)
+
+    # blend using Logistic Regression
+    LOG.info('# Blending..')
+    clf = LogisticRegression(C=1, n_jobs=-1, random_state=777)
+
+    # blend cv test by 10-fold
+    vld_pred = np.zeros(trn.shape[0], 1)
+    for i, (trn_ind, vld_ind) in enumerate(skf.split(trn, y)):
+        LOG.info('# Fold {} / {}'.format(i + 1, n_folds))
+
+        x_trn, x_vld = trn[trn_ind], trn[vld_ind]
+        y_trn, y_vld = y[trn_ind], y[vld_ind]
+
+        clf.fit(x_trn, y_trn)
+        vld_pred[vld_ind] = clf.predict_proba(x_vld)[:,1]
+
+    cv_score = roc_auc_score(y, vld_pred)
+    LOG.info('# CV Score: {}'.format(cv_score))
+
+    # refit all data
+    clf.fit(blend_trn, y)
+    tst_pred = clf.predict_proba(blend_tst)[:, 1]
+    tst_pred = (tst_pred - tst_pred.min()) / (tst_pred.max() - tst_pred.min())
+
+    # make submission file
+    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_pred})
     now = datetime.now()
     if not os.path.exists('./output'):
         os.mkdir('./output')
     sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
-    submission.to_csv(sub_file, index=False)
-
-    # generate submission without LR fit
-    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_nrm_stack})
-    sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '_woLR.csv'
     submission.to_csv(sub_file, index=False)
 
 
