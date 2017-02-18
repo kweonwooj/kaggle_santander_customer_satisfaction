@@ -5,6 +5,7 @@
     https://github.com/pjpan/Practice/tree/master/Kaggle-SantanderCustomerSatisfaction
 '''
 
+import os
 import time
 
 from utils.data_utils import *
@@ -14,7 +15,9 @@ from utils.log_utils import *
 from sklearn.metrics import roc_auc_score
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold
 from datetime import datetime
+import xgboost as xgb
 
 LOG = get_logger('34_wpppj_solution.log')
 
@@ -31,7 +34,7 @@ def main():
     LOG.info('-' * 50)
 
     # preprocess data
-    prepare_data(LOG)
+    # prepare_data(LOG)
 
     ##################################################################################################################
     ### Loading data
@@ -56,11 +59,11 @@ def main():
 
     # classifiers to use in blending
     clfs = [RandomForestClassifier(n_estimators=400, n_jobs=-1, criterion='gini', random_state=777),
-            ExtraTreesClassifier(n_estimators=400, n_jobs=-1, criterion='gini', random_state=777),
-            GradientBoostingClassifier(learning_rate=0.05, subsample=0.5, max_depth=6, n_estimators=400,
-                                       random_state=777),
+            RandomForestClassifier(n_estimators=500, n_jobs=-1, criterion='entropy', random_state=777),
+            ExtraTreesClassifier(n_estimators=500, n_jobs=-1, criterion='gini', random_state=777),
+            ExtraTreesClassifier(n_estimators=400, n_jobs=-1, criterion='entropy', random_state=777),
             LogisticRegression(C=1, n_jobs=-1, random_state=777),
-            xgb.XGBClassifier(missing=np.nan, max_depth=5, n_estimators=500, learning_rate=0.02, subsample=0.7,
+            xgb.XGBClassifier(missing=np.nan, max_depth=5, n_estimators=560, learning_rate=0.02, subsample=0.7,
                               colsample_bytree=0.7)
             ]
 
@@ -73,7 +76,7 @@ def main():
     # blender
     for j, clf in enumerate(clfs):
         LOG.info('# {} / {} : {}'.format(j + 1, len(clfs), clf))
-        blend_tst_j = np.zeros(tst.shape[0], n_folds)
+        blend_tst_j = np.zeros((tst.shape[0], n_folds))
 
         for i, (trn_ind, vld_ind) in enumerate(skf.split(trn, y)):
             LOG.info('# Fold {} / {}'.format(i + 1, n_folds))
@@ -103,7 +106,7 @@ def main():
         y_trn, y_vld = y[trn_ind], y[vld_ind]
 
         clf.fit(x_trn, y_trn)
-        vld_pred[vld_ind] = clf.predict_proba(x_vld)[:,1]
+        vld_pred[vld_ind] = np.expand_dims(clf.predict_proba(x_vld)[:,1], axis=1)
 
     cv_score = roc_auc_score(y, vld_pred)
     LOG.info('# CV Score: {}'.format(cv_score))
