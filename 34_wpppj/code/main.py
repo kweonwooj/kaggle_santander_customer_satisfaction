@@ -52,28 +52,15 @@ def main():
     # use xgboost to get 10-fold cv
     vld_stack, tst_stack = xgb_engine(trn, tst, y, LOG)
 
-    # fit stack
-    model = LogisticRegression(C=1, n_jobs=-1, random_state=777)
-    vld_stack = np.expand_dims(vld_stack, axis=1)
-    model.fit(vld_stack, y)
-    vld_stack_pred = model.predict_proba(vld_stack)[:,1]
-    LOG.info('# Evaluation on vld after LR fit: {:.6}'.format(roc_auc_score(y, vld_stack_pred)))
-
     # normalize and apply stack
     tst_nrm_stack = (tst_stack - tst_stack.min()) / (tst_stack.max() - tst_stack.min())
-    tst_stack_pred = model.predict_proba(np.expand_dims(tst_nrm_stack, axis=1))[:, 1]
 
     # generate submission
-    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_stack_pred})
+    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_nrm_stack})
     now = datetime.now()
     if not os.path.exists('./output'):
         os.mkdir('./output')
     sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
-    submission.to_csv(sub_file, index=False)
-
-    # generate submission without LR fit
-    submission = pd.DataFrame({'ID': tst_id, 'TARGET': tst_nrm_stack})
-    sub_file = './output/submission_' + str(now.strftime("%Y-%m-%d-%H-%M")) + '_woLR.csv'
     submission.to_csv(sub_file, index=False)
 
 
