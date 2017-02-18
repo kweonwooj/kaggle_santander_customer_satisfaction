@@ -67,8 +67,8 @@ def main():
     n_folds = 10
     skf = StratifiedKFold(n_splits=n_folds)
 
-    blend_trn = np.zeros(trn.shape[0], len(clfs))
-    blend_tst = np.zeros(tst.shape[0], len(clfs))
+    blend_trn = np.zeros((trn.shape[0], len(clfs)))
+    blend_tst = np.zeros((tst.shape[0], len(clfs)))
 
     # blender
     for j, clf in enumerate(clfs):
@@ -95,7 +95,7 @@ def main():
     clf = LogisticRegression(C=1, n_jobs=-1, random_state=777)
 
     # blend cv test by 10-fold
-    vld_pred = np.zeros(trn.shape[0], 1)
+    vld_pred = np.zeros((trn.shape[0], 1))
     for i, (trn_ind, vld_ind) in enumerate(skf.split(trn, y)):
         LOG.info('# Fold {} / {}'.format(i + 1, n_folds))
 
