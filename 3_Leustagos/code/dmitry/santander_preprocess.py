@@ -69,17 +69,17 @@ def add_features(train, test, features):
     flist = [x for x in train.columns if not x in ['ID','TARGET']]
 
     if 'tsne' in features:
-        tsne_feats = pd.read_csv(OUTPUT_PATH + 'features/tsne_feats.csv')
+        tsne_feats = pd.read_csv(OUTPUT_PATH + 'tsne_feats.csv')
         train = pd.merge(train, tsne_feats, on='ID', how='left')
         test = pd.merge(test, tsne_feats, on='ID', how='left')
 
     if 'pca' in features:
-        pca_feats = pd.read_csv(OUTPUT_PATH + 'features/dmitry_pca_feats.csv')
+        pca_feats = pd.read_csv(OUTPUT_PATH + 'dmitry_pca_feats.csv')
         train = pd.merge(train, pca_feats, on='ID', how='left')
         test = pd.merge(test, pca_feats, on='ID', how='left')
 
     if 'kmeans' in features:
-        kmeans_feats = pd.read_csv(OUTPUT_PATH + 'features/kmeans_feats.csv')
+        kmeans_feats = pd.read_csv(OUTPUT_PATH + 'kmeans_feats.csv')
         train = pd.merge(train, kmeans_feats, on='ID', how='left')
         test = pd.merge(test, kmeans_feats, on='ID', how='left')
 
