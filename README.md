@@ -64,9 +64,10 @@ for reduced version of kweonwooj
 </div>
 
 ## Objective
-- modularize the codes following the best practices
-- be able to reproduce, re-use the modules developed here
-- use annotation + object detection method, it is key methodology in image classification
+- Learn via reproducing winning solutions
+	- feature engineering
+	- model ensembling
+	- avoiding overfit
 
 ## Winning Methods
 - 3rd place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20978/3rd-place-solution), [Github](https://github.com/diefimov/santander_2016) by Dmitry Efimov
