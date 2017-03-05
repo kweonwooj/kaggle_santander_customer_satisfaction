@@ -3,11 +3,12 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import ExtraTreesClassifier
-from rgf import RGFRegressor
+#from rgf import RGFRegressor
 import xgboost as xgb
 import os
 import glob
 
+'''
 def train_predict_rgf(X_train, y_train, X_test):
     clf = RGFRegressor(working_directory='../data/output-rgf/',
                        rgf_bin = '../rgf1.2/bin/',
@@ -20,6 +21,7 @@ def train_predict_rgf(X_train, y_train, X_test):
     y_pred = clf.predict_many(X_test)[-1][1]
     clf.clean_files()
     return y_pred
+'''
 
 def train_predict_adaboost_classifier(X_train, y_train, X_test):
     clf = AdaBoostClassifier(n_estimators=300, learning_rate=0.1, random_state=32934)
