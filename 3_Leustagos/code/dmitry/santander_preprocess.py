@@ -5,8 +5,8 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import normalize
 from sklearn.cross_validation import StratifiedKFold
 
-INPUT_PATH = '../data/input/'
-OUTPUT_PATH = '../data/output/'
+INPUT_PATH = '../input/'
+OUTPUT_PATH = '../feats/'
 
 # replace extreme values/zeros to -999.0
 def process_base(train, test):
