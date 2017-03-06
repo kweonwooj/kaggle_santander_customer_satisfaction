@@ -36,7 +36,7 @@ def train_predict_xgboost_bugged(X_train, y_train, X_test):
     param['max_depth'] = 5
     param['eval_metric'] = 'auc'
     param['silent'] = 1
-    param['nthread'] = -1
+    #param['nthread'] = 10 # set it to max
     param['gamma'] = 1.0
     param['min_child_weight'] = 5
     param['subsample'] = 0.8

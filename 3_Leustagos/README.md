@@ -2,7 +2,7 @@
 
 
 ## Source
-This solution is a re-implemenation of #1 Leustagos's 3rd place solution in Python. Original link is [here](https://github.com/diefimov/santander_2016).
+This solution is a re-implemenation of Team "#1 Leustagos"s 3rd place solution in Python. Original link is [here](https://github.com/diefimov/santander_2016).
 
 Personal comments has been included in python codes.
 
