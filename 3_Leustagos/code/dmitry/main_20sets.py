@@ -103,7 +103,7 @@ def main_20sets(LOG):
                 # AUC calculation
                 fold_auc = roc_auc_score(preds['TARGET'], preds[MODEL])
                 aucs.append(fold_auc)
-            LOG.info(np.mean(aucs), np.std(aucs))
+            LOG.info('# AUC score : {} {} '.format(np.mean(aucs), np.std(aucs)))
 
         # clip prediction values
         preds_model.loc[preds_model[MODEL] < 0, MODEL] = 0.0
@@ -117,7 +117,9 @@ def main_20sets(LOG):
         preds_model = preds_model.groupby('ID')[MODEL].mean().reset_index()
         preds_model.columns = ['ID', 'dmitry_' + MODEL]
         preds_all = pd.merge(preds_all, preds_model, on='ID', how='left')
-        preds_all.to_csv('all_models_temp.csv', index=False)
+        if not os.path.exists(OUTPUT_PATH):
+            os.makedirs(OUTPUT_PATH)
+        preds_all.to_csv(OUTPUT_PATH + 'all_models_temp.csv', index=False)
 
     # Extract train cv predictions
     preds_train = pd.merge(train[['ID']], preds_all, on='ID', how='left')

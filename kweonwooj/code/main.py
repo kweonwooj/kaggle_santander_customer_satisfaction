@@ -24,7 +24,7 @@ np.random.seed(777)
 def main():
 
     print('=' * 50)
-    print('# Santander Customer Satisfaction _ bare_minimum')
+    print('# Santander Customer Satisfaction _ kweonwooj')
     print('-' * 50)
 
     ##################################################################################################################
@@ -44,17 +44,10 @@ def main():
     print('# Feature Engineering..')
     print('-' * 50)
 
-    cols = X.columns
-    trn = X.as_matrix(columns=cols)
+    X = f_engineer(X)
 
-    model = RandomForestClassifier(max_depth=10,
-                                   n_jobs=-1, random_state=777)
-    model.fit(trn, Y)
-
-    feat_imp = np.zeros(X.shape[1]).tolist()
-    for i, j in enumerate(scipy.stats.rankdata(model.feature_importances_, method='ordinal')):
-        feat_imp[j - 1] = (cols[i], model.feature_importances_[i])
-    feat_imp.reverse()
+    features = X.columns
+    trn = X.as_matrix(columns=features)
 
     ##################################################################################################################
     ### Cross Validations
@@ -78,21 +71,16 @@ def main():
     best_ntree_limits = []
 
     y_pred = np.zeros(Y.shape)
-
-    n_feat = 70
-    cols = [feat_imp[i][0] for i in range(n_feat)]
-    trn = X.as_matrix(columns=cols)
-
     n_splits = 5
-    skf = StratifiedKFold(n_splits=n_splits)
+    skf = StratifiedKFold(n_splits=n_splits, random_state=777)
     for i, (trn_index, vld_index) in enumerate(skf.split(trn, Y)):
         print('# CV Iter {} / {}'.format(i+1, n_splits))
 
         X_trn, X_vld = trn[trn_index], trn[vld_index]
         y_trn, y_vld = Y[trn_index], Y[vld_index]
 
-        dtrn = xgb.DMatrix(X_trn, label=y_trn, feature_names=cols)
-        dvld = xgb.DMatrix(X_vld, label=y_vld, feature_names=cols)
+        dtrn = xgb.DMatrix(X_trn, label=y_trn, feature_names=features)
+        dvld = xgb.DMatrix(X_vld, label=y_vld, feature_names=features)
 
         evallist = [(dtrn, 'train'), (dvld, 'eval')]
         model = xgb.train(param, dtrn, 1000, evals=evallist, early_stopping_rounds=20)
@@ -110,13 +98,13 @@ def main():
     ##################################################################################################################
 
     print('# Re-Training on full train data..')
-    dtrn = xgb.DMatrix(trn, label=Y, feature_names=cols)
+    dtrn = xgb.DMatrix(trn, label=Y, feature_names=features)
     model = xgb.train(param, dtrn, int(np.mean(best_ntree_limits) * (n_splits + 1) / n_splits))
 
     print('# Making predictions on test data..')
     X_tst, tst_id = load_test()
-    X_tst = X_tst.as_matrix(columns=cols)
-    dtst = xgb.DMatrix(X_tst, feature_names=cols)
+    X_tst = X_tst.as_matrix(columns=features)
+    dtst = xgb.DMatrix(X_tst, feature_names=features)
     tst_pred = model.predict(dtst)
 
     ##################################################################################################################

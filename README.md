@@ -15,7 +15,13 @@
 
 Santander Bank is asking Kagglers to help them identify dissatisfied customers early in their relationship. Doing so would allow Santander to take proactive steps to improve a customer's happiness before it's too late.
 
-In this competition, you'll work with hundreds of anonymized features to predict if a customer is satisfied or dissatisfied with their banking experience.
+This competition requires you to deal with combination of sparse, noisy and weak predictors effectively. Since the feature names are provided with anonymity, there is limitation in feature interactions, and general scheme of feature engineering spans from clipping outliers, dropping duplicate and sparse columns, extracting PCA/K-means/t-SNE features and adding count of zeros. Even with enough feature engineering, a single model prediction will have difficulty climbing the ladder of Private LB. 
+
+This competition requires an ensemble of multiple models and variety of feature+model combinations as well as more iterated blending techniques to rise to the top of the ladder. 3rd place team had 6 members each with multiple feature+model predictions, they all utilized 5-fold x 20 times cv seed, and ensembled all of their predictions to reach the top place. A solution from one of the 3rd place team ranks 509th place (Top 10%) all by itself. This tells us the importance of ensemble in this competition.
+
+Although time consuming, well structured cv seed and adding diversity in single models by combining multiple feature+model leads to more generalizable result.
+
+My re-implentation includes partial re-implementation of winner's solutions, hence their Private LB rank is not high as their actual rank.
 
 ## Result
 | Submission | CV LogLoss | Public LB | Rank | Private LB | Rank |
@@ -25,6 +31,7 @@ In this competition, you'll work with hundreds of anonymized features to predict
 | kweonwooj | | 0.840797 | **1667** | 0.826500 | **947** |
 | toshi_k redux | 0.8418 | 0.840002 | **2122** | 0.826658 | **810** |
 | wpppj redux | 0.841137 | 0.839622 | **2232** | 0.826814 | **556** |
+| mathias from Team Leustago | | 0.839441 | **2302** | 0.826881 | **509** |
 
 Total teams : 5,123
 
@@ -43,7 +50,7 @@ python code/main.py
 ```
 for each of the directories.
 
-Make sure you are on Python 3.5.2 with library versions same as specified in requirements.txt
+Make sure you are on Python 2.7 with library versions same as specified in requirements.txt
 
 ## Add requirements.txt
 
@@ -58,16 +65,18 @@ for bare minimum
   <img src="./input/bare_minimum.png"><br><br>
 </div>
 
-for reduced version of kweonwooj
+for mathias's solution form Team Leustago (3rd place)
 <div align="center">
-  <img src="./input/kweonwooj.png"><br><br>
+  <img src="./input/mathias.png"><br><br>
 </div>
 
-## Objective
-- Learn via reproducing winning solutions
-	- feature engineering
-	- model ensembling
-	- avoiding overfit
+## What I've learned
+- Importance of ensemble in squeezing the private LB score
+- Techniques of adding diversity to the prediction
+	- combination of feature sets
+	- combination of algorithms
+	- multiple sets of 5-fold cross validation
+	- power of rank averaging in combining multiple submissions
 
 ## Winning Methods
 - 3rd place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20978/3rd-place-solution), [Github](https://github.com/diefimov/santander_2016) by Dmitry Efimov
@@ -76,5 +85,3 @@ for reduced version of kweonwooj
 - 13th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20786/13th-place-good-or-bad) by Ouranos
 - 34th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/22089/34th-place-code), [Github](https://github.com/pjpan/Practice/tree/master/Kaggle-SantanderCustomerSatisfaction) by wpppj
 - 44th place solution on [Forum](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20858/44th-place-solution), [Github](https://github.com/toshi-k/kaggle-santander-customer-satisfaction) by toshi_k
-- [How to get Rank 24](https://www.kaggle.com/c/santander-customer-satisfaction/forums/t/20773/how-to-get-rank-24)
-- [Possible 14th place](https://www.kaggle.com/shahnawazakhtar/santander-customer-satisfaction/14th-place-private-lb-script/discussion)
